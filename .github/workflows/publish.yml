@@ -8,13 +8,15 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # PyPI Trusted Publishers (OIDC) — no API token needed once the
-    # publisher is configured at https://pypi.org/manage/account/publishing/
-    # Until then, fall back to PYPI_API_TOKEN secret via twine.
+    # API-token path. We started on Trusted Publishers (OIDC) but that
+    # requires 2FA on the PyPI account before the publishing config
+    # page is even accessible, so for the initial v0.1.0 publish we
+    # use a PYPI_API_TOKEN secret. After the project exists on PyPI we
+    # can configure Trusted Publishers for the project (still useful —
+    # short-lived OIDC tokens are strictly better than a long-lived
+    # API token), but that migration is non-blocking.
     permissions:
-      id-token: write   # required for OIDC
       contents: read
-    environment: pypi   # required by PyPI Trusted Publishers
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,3 +33,5 @@ jobs:
         run: python -m build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
