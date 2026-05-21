@@ -31,8 +31,46 @@ class SpendCaps(TypedDict, total=False):
 
 
 @dataclass
+class AccountReputation:
+    """Positive-only publisher trust badges.
+
+    Returned on get_api() detail responses (catalog list endpoints
+    omit them for payload size). New accounts have all booleans
+    false — treat absence of badges as "no signal yet", NOT as a
+    warning. Thresholds are env-tunable server-side.
+    """
+
+    tenure_months: int
+    established: bool
+    lifetime_success_calls: int
+    top_contributor: bool
+    average_rating: float | None
+    review_count: int
+    highly_rated: bool
+    active_apis: int
+    computed_at: int
+
+
+@dataclass
+class PublisherInfo:
+    """Publisher record attached to a catalog detail response."""
+
+    handle: str | None
+    display_name: str | None
+    verification_tier: str | None
+    reputation: AccountReputation | None = None
+
+
+@dataclass
 class CatalogApi:
-    """One catalog listing returned by list_catalog / get_api."""
+    """One catalog listing returned by list_catalog / get_api.
+
+    The fields up to `tags` are present on both endpoints. The fields
+    below (`publisher`, `sample_response`) are populated by get_api()
+    only — the list endpoint omits them to keep response sizes small.
+    Both are typed as Optional so type-checked code on the list path
+    keeps working without narrowing.
+    """
 
     slug: str
     url_name: str | None
@@ -47,6 +85,12 @@ class CatalogApi:
     proxy_url: str
     categories: list[str] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
+    # Detail-only fields. None when missing (list response) AND when
+    # the wire returned null (legacy listing without a sample). The
+    # distinction rarely matters to callers — both mean "not
+    # available, don't render".
+    publisher: PublisherInfo | None = None
+    sample_response: str | None = None
 
 
 @dataclass

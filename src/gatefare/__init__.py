@@ -21,8 +21,10 @@ from .client import Gatefare
 from .errors import GatefareApiError, SpendCapError
 from .spend_cap import DEFAULT_SPEND_CAPS, SpendCapManager
 from .types import (
+    AccountReputation,
     CallApiResult,
     CatalogApi,
+    PublisherInfo,
     SpendCaps,
     WalletBalance,
 )
@@ -33,10 +35,12 @@ __all__ = [
     "SpendCapError",
     "SpendCapManager",
     "DEFAULT_SPEND_CAPS",
+    "AccountReputation",
     "CallApiResult",
     "CatalogApi",
+    "PublisherInfo",
     "SpendCaps",
     "WalletBalance",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

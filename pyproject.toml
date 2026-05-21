@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gatefare"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python client for the Gatefare x402 payment marketplace. Pay any Gatefare-listed API in USDC on Base."
 readme = "README.md"
 license = { text = "MIT" }

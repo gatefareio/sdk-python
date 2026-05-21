@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 import httpx
 
 from .errors import GatefareApiError
-from .types import CatalogApi
+from .types import AccountReputation, CatalogApi, PublisherInfo
 
 
 @dataclass
@@ -39,6 +39,34 @@ def _parse_price_usdc(price: str) -> float:
 
 
 def _raw_to_catalog_api(r: dict[str, Any]) -> CatalogApi:
+    # Detail-only fields (get_api responses). The list endpoint omits
+    # them, so we pass through opportunistically: present when the
+    # wire provided them, None otherwise. Same semantics as the TS
+    # SDK's @gatefare/client.
+    publisher: PublisherInfo | None = None
+    raw_pub = r.get("publisher")
+    if isinstance(raw_pub, dict):
+        rep_raw = raw_pub.get("reputation")
+        reputation: AccountReputation | None = None
+        if isinstance(rep_raw, dict):
+            reputation = AccountReputation(
+                tenure_months=int(rep_raw.get("tenureMonths") or 0),
+                established=bool(rep_raw.get("established")),
+                lifetime_success_calls=int(rep_raw.get("lifetimeSuccessCalls") or 0),
+                top_contributor=bool(rep_raw.get("topContributor")),
+                average_rating=rep_raw.get("averageRating"),
+                review_count=int(rep_raw.get("reviewCount") or 0),
+                highly_rated=bool(rep_raw.get("highlyRated")),
+                active_apis=int(rep_raw.get("activeApis") or 0),
+                computed_at=int(rep_raw.get("computedAt") or 0),
+            )
+        publisher = PublisherInfo(
+            handle=raw_pub.get("handle"),
+            display_name=raw_pub.get("displayName"),
+            verification_tier=raw_pub.get("verificationTier"),
+            reputation=reputation,
+        )
+
     return CatalogApi(
         slug=r["slug"],
         url_name=r.get("urlName"),
@@ -53,6 +81,8 @@ def _raw_to_catalog_api(r: dict[str, Any]) -> CatalogApi:
         proxy_url=r["proxyUrl"],
         categories=list(r.get("categories") or []),
         tags=list(r.get("tags") or []),
+        publisher=publisher,
+        sample_response=r.get("sampleResponse"),
     )
 
 
