@@ -192,6 +192,17 @@ gf = Gatefare(
 Use `with Gatefare(...) as gf:` to auto-close the underlying httpx
 client when done.
 
+## Related packages
+
+Gatefare ships three first-party packages. They share the same x402
+protocol and the same backend, so a project can mix them as needed:
+
+| Package | Where | When to use |
+|---|---|---|
+| [`gatefare`](https://pypi.org/project/gatefare/) (this one) | PyPI | Python agents that pay APIs in code |
+| [`@gatefare/client`](https://www.npmjs.com/package/@gatefare/client) | npm | TypeScript / JavaScript agents |
+| [`@gatefare/mcp`](https://www.npmjs.com/package/@gatefare/mcp) | npm | Drop into Claude Desktop / Cursor / any MCP host to give the agent tools for catalog discovery + paid calls |
+
 ## License
 
 MIT. See [LICENSE](./LICENSE).
