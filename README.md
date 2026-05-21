@@ -1,5 +1,10 @@
 # gatefare
 
+[![PyPI version](https://img.shields.io/pypi/v/gatefare.svg)](https://pypi.org/project/gatefare/)
+[![Python versions](https://img.shields.io/pypi/pyversions/gatefare.svg)](https://pypi.org/project/gatefare/)
+[![CI](https://github.com/gatefareio/sdk-python/actions/workflows/ci.yml/badge.svg)](https://github.com/gatefareio/sdk-python/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 Python client for the [Gatefare](https://gatefare.io) x402 payment
 marketplace. Pay any Gatefare-listed API in USDC on Base with a few
 lines of code. Non-custodial. No platform account required for paying;
