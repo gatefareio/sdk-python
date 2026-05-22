@@ -8,14 +8,18 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # API-token path. We started on Trusted Publishers (OIDC) but that
-    # requires 2FA on the PyPI account before the publishing config
-    # page is even accessible, so for the initial v0.1.0 publish we
-    # use a PYPI_API_TOKEN secret. After the project exists on PyPI we
-    # can configure Trusted Publishers for the project (still useful —
-    # short-lived OIDC tokens are strictly better than a long-lived
-    # API token), but that migration is non-blocking.
+    # PyPI Trusted Publishers (OIDC). The gatefare project on PyPI is
+    # configured with this repo (gatefareio/sdk-python), this workflow
+    # filename (publish.yml), and no environment. GitHub mints a
+    # short-lived OIDC token per run; PyPI verifies it against that
+    # config. No long-lived API token to store, rotate, or leak.
+    #
+    # If you ever need to fall back to a token, add:
+    #   with:
+    #     password: ${{ secrets.PYPI_API_TOKEN }}
+    # and grant the token publish scope on the project.
     permissions:
+      id-token: write   # required for OIDC trusted publishing
       contents: read
     steps:
       - uses: actions/checkout@v4
@@ -33,5 +37,3 @@ jobs:
         run: python -m build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
